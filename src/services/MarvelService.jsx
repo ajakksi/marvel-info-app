@@ -24,12 +24,16 @@ class MarvelService {
     }
 
     _transformCharacter = (char) => {
+        const fullThumbnail = char.thumbnail.path + '.' + char.thumbnail.extension;
+        const imageNotAvailable = fullThumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg';
+        
         return {
             name: char.name,
             description: char.description,  
-            thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
+            thumbnail: fullThumbnail,
             homepage: char.urls[0].url,
-            wiki: char.urls[1].url 
+            wiki: char.urls[1].url,
+            thumbnailStyle: imageNotAvailable?{'objectFit':'contain'} : {'objectFit':'cover'}
         }
 
     }
