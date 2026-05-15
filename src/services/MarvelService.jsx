@@ -34,7 +34,8 @@ class MarvelService {
             thumbnail: fullThumbnail,
             homepage: char.urls[0].url,
             wiki: char.urls[1].url,
-            thumbnailStyle: imageNotAvailable?{'objectFit':'contain'} : {'objectFit':'cover'}
+            thumbnailStyle: imageNotAvailable?{'objectFit':'contain'} : {'objectFit':'cover'},
+            comics: char.comics.items
         }
 
     }

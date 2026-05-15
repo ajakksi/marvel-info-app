@@ -38,7 +38,9 @@ class CharList extends Component {
     contentLoaded = (charList) =>{
          const items =  charList.map(item=>{
             return (
-                <li className="char__item" key={item.id}>
+                <li className="char__item"
+                     key={item.id}
+                     onClick={() => this.props.onCharSelected(item.id)}>
                     <img src={item.thumbnail} alt="abyss" style={item.thumbnailStyle}/>
                     <div className="char__name">{item.name}</div>
                     
