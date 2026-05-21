@@ -66,8 +66,6 @@ class CharList extends Component {
     }
 
     contentLoaded = (charList) =>{
-
-        this.refArr = [];
          const items =  charList.map((item,i)=>{
             return (
                 <li className="char__item"
