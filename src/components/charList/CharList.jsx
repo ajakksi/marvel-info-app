@@ -52,12 +52,42 @@ class CharList extends Component {
         this.setState({loading:false,error: true})
     }
 
+    refArr = [];
+    
+    setRef = (ref) =>{
+        this.refArr.push(ref);
+    }
+
+    focusOnItem = (id) =>{
+        this.refArr.forEach(item => item.classList.remove('char__item_selected'));
+        this.refArr[id].classList.add('char__item_selected');
+        this.refArr[id].focus();
+
+    }
+
     contentLoaded = (charList) =>{
-         const items =  charList.map(item=>{
+
+        this.refArr = [];
+         const items =  charList.map((item,i)=>{
             return (
                 <li className="char__item"
                      key={item.id}
-                     onClick={() => this.props.onCharSelected(item.id)}>
+                     ref = {this.setRef}
+                     tabIndex="0"
+                     onClick={() => {
+                        this.props.onCharSelected(item.id);
+                        this.focusOnItem(i)
+                        }}
+                        onKeyDown={(e)=>{
+                            if(e.key === ' ' || e.key === 'Enter'){
+                                this.props.onCharSelected(item.id);
+                                this.focusOnItem(i);
+                            }
+                            
+                        }
+
+                        }>
+                    
                     <img src={item.thumbnail} alt="abyss" style={item.thumbnailStyle}/>
                     <div className="char__name">{item.name}</div>
                     
