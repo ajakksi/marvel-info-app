@@ -1,4 +1,4 @@
-import {Component} from 'react'
+import {useEffect, useState} from 'react'
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
@@ -6,51 +6,54 @@ import ErrorMessage from '../errorMessage/ErrorMessage';
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
+const marvelService = new MarvelService();
 
-class RandomChar extends Component{
+const RandomChar = () =>{
 
-    state = {
-        char:{},
-        loading: true,
-        error: false
+    const [char,setChar] = useState({});
+    const [loading,setLoading]  = useState(false);
+    const [error,setError] = useState(false);
+
+    
+
+    const onCharLoaded = (char) =>{
+        setChar(char);
+        setLoading(false);
+        setError(false);
     }
 
-    marvelService = new MarvelService();
-
-    componentDidMount(){
-        this.updateChar();
-        // this.timerId = setInterval(this.updateChar,3000);
+    const onCharLoading = () => {
+        setLoading(true);
     }
 
-    componentWillUnmount(){
-        // clearInterval(this.timerId);
+    const onError = () =>{
+        setLoading(false);
+        setError(true);
     }
 
-    onCharLoaded = (char) =>{
-        this.setState({char, loading:false, error:false})
-    }
+    const updateChar = () => {
 
-    onCharLoading = () => {
-        this.setState({loading:true});
-    }
-
-    onError = () =>{
-        this.setState({loading:false,error: true})
-    }
-
-    updateChar = () => {
-
-        this.onCharLoading();
+        onCharLoading();
         const id = Math.floor(Math.random() * (20-1) + 1);
-        this.marvelService
+
+        marvelService
             .getCharacter(id)
-            .then(this.onCharLoaded)
-            .catch(this.onError)
+            .then(onCharLoaded)
+            .catch(onError)
         
         
     }
 
-    formatDescription = (description) => {
+    useEffect(()=>{
+        updateChar();
+        const timerId = setInterval(updateChar, 60000);
+
+        return () => {
+            clearInterval(timerId)
+        }
+    },[])
+
+    const formatDescription = (description) => {
         if(!description){
            return 'There is no description for this character';
         }
@@ -60,11 +63,10 @@ class RandomChar extends Component{
         return description
     }
 
-    render(){
-        const {char, loading,error} = this.state;
+    {
         const errorMessage = error ? <ErrorMessage/>  : null
         const spinner = loading ? <Spinner/> : null
-        const content = !(loading || error) ? <View char = {char} formatDesc={this.formatDescription}/> : null
+        const content = !(loading || error) ? <View char = {char} formatDesc={formatDescription}/> : null
  
         return (
         <div className="randomchar">
@@ -79,7 +81,7 @@ class RandomChar extends Component{
                 <p className="randomchar__title">
                     Or choose another one
                 </p>
-                <button onClick = {this.updateChar} className="button button__main">
+                <button onClick = {updateChar} className="button button__main">
                     <div className="inner">try it</div>
                 </button>
                 <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>

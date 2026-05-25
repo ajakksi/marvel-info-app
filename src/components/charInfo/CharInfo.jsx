@@ -7,60 +7,51 @@ import ErrorMessage from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton'
 
 
-import { Component } from 'react';
+import { useState,useEffect, useCallback } from 'react';
 
-class CharInfo extends Component {
+const marvelService = new MarvelService();
 
-    state = {
-        char: null,
-        loading: false,
-        error:false
+const CharInfo = ({charId}) => {
+
+    const [char,setChar] = useState(null);
+    const [loading,setLoading]  = useState(false);
+    const [error,setError] = useState(false);
+
+    const onCharLoaded = (char) => {
+
+        setChar(char);
+        setLoading(false);
     }
 
-    marvelService = new MarvelService();
-
-    componentDidMount(){
-        this.updateChar();
+    const onCharLoading = () => {
+        setLoading(true);
+        setError(false);
     }
 
-
-    componentDidUpdate(prevProps){
-        if(this.props.charId !==prevProps.charId){
-           return this.updateChar();
-        }
-
+    const onError = () =>{
+        setLoading(false);
+        setError(true);
     }
 
-    updateChar = () => {
-        const {charId} = this.props;
+    const updateChar = useCallback(()=>{
+
         if(!charId){
             return;
         }
 
-        this.onCharLoading();
+        onCharLoading();
 
-        this.marvelService
+        marvelService
             .getCharacter(charId)
-            .then(this.onCharLoaded)
-            .catch(this.onError);
-
-    }
-
-    onCharLoaded = (char) => {
-
-        this.setState({char,  loading:false});
-    }
-    onCharLoading = () => {
-        this.setState({loading:true});
-    }
-
-    onError = () =>{
-        this.setState({loading:false,error: true})
-    }
+            .then(onCharLoaded)
+            .catch(onError);
 
 
-    render(){
-        const {char,loading,error} = this.state;
+    },[charId])
+
+    useEffect(()=>{
+         updateChar();
+    },[updateChar])
 
         const skeleton = char || loading || error ? null : <Skeleton/>;
         const spinner = loading ? <Spinner/> : null
@@ -75,9 +66,7 @@ class CharInfo extends Component {
             {content}
            
         </div>
-    )
-    }
-
+        )
 }
     
 const View = ({char}) =>{
