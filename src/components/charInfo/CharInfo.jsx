@@ -7,7 +7,7 @@ import ErrorMessage from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton'
 
 
-import { useState,useEffect, useCallback } from 'react';
+import { useState,useEffect } from 'react';
 
 const marvelService = new MarvelService();
 
@@ -17,41 +17,40 @@ const CharInfo = ({charId}) => {
     const [loading,setLoading]  = useState(false);
     const [error,setError] = useState(false);
 
-    const onCharLoaded = (char) => {
-
-        setChar(char);
-        setLoading(false);
-    }
-
-    const onCharLoading = () => {
-        setLoading(true);
-        setError(false);
-    }
-
-    const onError = () =>{
-        setLoading(false);
-        setError(true);
-    }
-
-    const updateChar = useCallback(()=>{
-
-        if(!charId){
+    useEffect(() => {
+        if (!charId) {
             return;
         }
 
-        onCharLoading();
+        let cancelled = false;
 
-        marvelService
-            .getCharacter(charId)
-            .then(onCharLoaded)
-            .catch(onError);
+        const fetchCharacter = async () => {
+            
+            if (cancelled) return;
+                setLoading(true);
+                setError(false);
 
+            try {
+                const res = await marvelService.getCharacter(charId);
+                
+                if (!cancelled) {
+                    setChar(res);
+                    setLoading(false);
+                }
+            } catch {
+                if (!cancelled) {
+                    setLoading(false);
+                    setError(true);
+                }
+            }
+        };
 
-    },[charId])
+        fetchCharacter();
 
-    useEffect(()=>{
-         updateChar();
-    },[updateChar])
+        return () => {
+            cancelled = true;
+        };
+    }, [charId]);
 
         const skeleton = char || loading || error ? null : <Skeleton/>;
         const spinner = loading ? <Spinner/> : null
