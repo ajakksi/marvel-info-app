@@ -3,6 +3,7 @@ import RandomChar from "../randomChar/RandomChar";
 import CharList from "../charList/CharList";
 import CharInfo from "../charInfo/CharInfo";
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
+import ComicsList from '../comicsList/ComicsList'
 
 import decoration from '../../resources/img/vision.png';
 
@@ -16,11 +17,14 @@ const App = () => {
     const onCharSelected = (id) =>{
         setSelectedChar(id);
     }
+    
 
     return (
         <div className="app">
             <AppHeader/>
             <main>
+                <ComicsList/>
+
                     <ErrorBoundary>
                         <RandomChar/>
                     </ErrorBoundary>
