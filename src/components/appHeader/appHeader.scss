@@ -22,10 +22,17 @@
             line-height: 32px;
             li {
                 margin: 0 8px;
-                a:hover {
+                a{
+                    &:hover {
                     color: $main-color;
+                    }
+
+                    &.active {
+                        color : #9f0013
+                    }
                 }
             }
+            
         }
     }
 }
