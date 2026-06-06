@@ -23,6 +23,11 @@ const useMarvelService = () => {
         return _transformCharacter(res.data.results[0]);
     }
 
+    const getComic = async (id) => {
+        const res = await request(`${_apiBase}comics/${id}?${_apiKey}`);
+        return _transformComisc(res.data.results[0]);
+    }
+
     const _transformCharacter = (char) => {
         const fullThumbnail = char.thumbnail.path + '.' + char.thumbnail.extension;
         const imageNotAvailable = fullThumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg';
@@ -46,14 +51,16 @@ const useMarvelService = () => {
 
         return {
             id:comic.id,
+            pageCount: `${comic.pageCount} pages`,
             title: comic.title,
             description: comic.description,  
             thumbnail: fullThumbnail,
+            language: comic.language,
             price:`${comic.prices[0].price}$`
         }
     }
 
-    return  {loading, error, clearError, getAllCharacters, getCharacter,getAllComics}
+    return  {loading, error, clearError, getAllCharacters, getCharacter,getAllComics,getComic}
 }
 
 export default useMarvelService;

@@ -1,8 +1,11 @@
-import './comicsList.scss';
 import { useState,useEffect} from 'react';
+import { Link } from 'react-router-dom';
+
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import useMarvelService from '../../services/MarvelService';
+
+import './comicsList.scss';
 
 const ComicsList = () => {
     
@@ -27,14 +30,14 @@ const ComicsList = () => {
     }
 
     const onRequest = (offset, initial) =>{
-        initial ? setNewItemLoading(false) : setNewItemLoading(true);
+        if (!initial) setNewItemLoading(true);
 
         getAllComics(offset)
             .then(comicsListLoaded)
     }
 
     useEffect(()=>{
-            onRequest(offset,true);
+           getAllComics(offset).then(comicsListLoaded);
     }, [])
 
 
@@ -43,11 +46,11 @@ const ComicsList = () => {
                 <li className="comics__item"
                     key={item.id}>
                     
-                    <a href="#">
+                    <Link to={`/comics/${item.id}`}>
                         <img src={item.thumbnail} alt={item.title} className="comics__item-img"/>
                         <div className="comics__item-name">{item.title}</div>
                         <div className="comics__item-price">{item.price}</div>
-                    </a>
+                    </Link>
                 </li>
             )
         })  
